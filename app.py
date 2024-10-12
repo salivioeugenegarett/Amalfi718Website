@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 from functools import wraps
 
-load_dotenv('HT.env')
+load_dotenv('.env')
 
 encryption_key = os.getenv('ENCRYPTION_KEY')
 fernet = Fernet(encryption_key.encode())
