@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaReserve | Amalfi 718 Hotel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" type="image/x-icon">
+</head>
+<body>
+  <header id="header" class="header">
+    <h1 class="logo"><a href="/admin-login">Amalfi 718 Hotel</a></h1>
+    <nav>
+      <a href="##" id="login-link">Sign In</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="sliding-banner">
+      <div class="slides">
+        <div class="slide"><img src="{{ url_for('static', filename='images/slide1.jpg') }}" alt="Slide 1"></div>
+        <div class="slide"><img src="{{ url_for('static', filename='images/slide2.jpg') }}" alt="Slide 2"></div>
+        <div class="slide"><img src="{{ url_for('static', filename='images/slide3.jpg') }}" alt="Slide 3"></div>
+      </div>
+    </div>
+
+    <div class="intro">
+      <h1>Welcome to <br> Amalfi 718 Hotel</h1>
+      <p>Your Business and Leisure Boutique Hotel in Lipa City</p>
+  </div>
+
+    <h2>List of Rooms:</h2>
+    <section class="room-list">
+      <div class="room">
+        <div class="room-image">
+          <img src="{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}" alt="Standard Room">
+        </div>
+        <h2 class="room-type">Standard Room</h2>
+        <p class="room-price">Php 2,900.00</p>
+        <ul class="room-features">
+          <li>1 Full Bed</li>
+          <li>Air Conditioning</li>
+          <li>Private Bathroom</li>
+        </ul>
+        <div class="room-footer">
+          <span class="availability">Available</span>
+          <a href="/standard-room" class="book-btn">Book</a>
+        </div>
+      </div>
+      <div class="room">
+        <div class="room-image">
+          <img src="{{ url_for('static', filename='images/Superior-Room Cover.jpg') }}" alt="Superior Room">
+        </div>
+        <h2 class="room-type">Superior Room</h2>
+        <p class="room-price">Php 3,200.00</p>
+        <ul class="room-features">
+          <li>1 Full Bed</li>
+          <li>Air Conditioning</li>
+          <li>Private Bathroom</li>
+        </ul>
+        <div class="room-footer">
+          <span class="availability">Available</span>
+          <a href="/superior-room" class="book-btn">Book</a>
+        </div>
+      </div>
+      <div class="room">
+        <div class="room-image">
+          <img src="{{ url_for('static', filename='images/Deluxe-Room Cover.jpg') }}" alt="Deluxe Room">
+        </div>
+        <h2 class="room-type">Deluxe Room</h2>
+        <p class="room-price">Php 3,500.00</p>
+        <ul class="room-features">
+          <li>1 Full Bed</li>
+          <li>Air Conditioning</li>
+          <li>Private Bathroom</li>
+        </ul>
+        <div class="room-footer">
+          <span class="availability">Available</span>
+          <a href="/deluxe-room" class="book-btn">Book</a>
+        </div>
+      </div>
+      <div class="room">
+        <div class="room-image">
+          <img src="{{ url_for('static', filename='images/Suite_Room Cover.jpg') }}" alt="Suite Room">
+        </div>
+        <h2 class="room-type">Suite Room</h2>
+        <p class="room-price">Php 3,700.00</p>
+        <ul class="room-features">
+          <li>1 Full Bed</li>
+          <li>Air Conditioning</li>
+          <li>Private Bathroom</li>
+        </ul>
+        <div class="room-footer">
+          <span class="availability">Available</span>
+          <a href="/suite-room" class="book-btn">Book</a>
+        </div>
+      </div>
+      <div class="room">
+        <div class="room-image">
+          <img src="{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}" alt="E.Suite Room">
+        </div>
+        <h2 class="room-type">E.Suite Room</h2>
+        <p class="room-price">Php 4,200.00</p>
+        <ul class="room-features">
+          <li>1 Full Bed</li>
+          <li>Air Conditioning</li>
+          <li>Private Bathroom</li>
+        </ul>
+        <div class="room-footer">
+          <span class="availability">Available</span>
+          <a href="/esuite-room" class="book-btn">Book</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <h3>Contact Us</h3>
+        <p>Amalfi 718 Hotel</p>
+        <p>Km. 84 J.P. Laurel Hwy, Pilahan Sabang Lipa City, Batangas</p>
+        <p>Phone: +63 960 202 1748</p>
+        <p>Landline: (043) 727 9761</p>
+        <p>Email Address: info.amalfihotel@gmail.com</p>
+        <div class="social-media">
+          <a href="https://www.facebook.com/profile.php?id=100087156312194" target="_blank">
+            <img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/amalfi.hotel/" target="_blank">
+            <img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram">
+          </a>
+        </div>
+      </div>
+      <div class="footer-right">
+        <h3>Our Location</h3>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3872.084250601872!2d121.16190730898396!3d13.953588986403144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6df6598a95e3%3A0x39cc0e36c3eaccb4!2sAmalfi718%20Hotel!5e0!3m2!1sen!2sph!4v1718885475625!5m2!1sen!2sph"
+          width="100%" height="100%" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0">
+        </iframe>
+      </div>
+    </div>
+  </footer>
+
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img src="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" alt="Hotel Logo">
+        <h2>Amalfi 718 Hotel</h2>
+        <span class="close">&times;</span>
+      </div>
+      
+      <div id="signin-form" class="form-container">
+        <h3>Sign In</h3>
+        <form action="{{ url_for('login') }}" method="POST">
+          <input type="hidden" name="source" value="homepage">
+          <input type="email" name="email" placeholder="Email" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <button type="submit">Sign In</button>
+        </form>
+      </div>      
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  <script>
+    const modal = document.getElementById('bookModal');
+    const loginLink = document.getElementById('login-link');
+    const closeBtn = document.querySelector('.close');
+    const signinBtn = document.getElementById('signin-btn');
+    const registerBtn = document.getElementById('register-btn');
+    const signinForm = document.getElementById('signin-form');
+    const registerForm = document.getElementById('register-form');
+
+    loginLink.addEventListener('click', () => {
+      modal.style.display = 'block';
+      signinForm.classList.add('active');
+      registerForm.classList.remove('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    signinBtn.addEventListener('click', () => {
+      signinForm.classList.add('active');
+      registerForm.classList.remove('active');
+    });
+
+    registerBtn.addEventListener('click', () => {
+      registerForm.classList.add('active');
+      signinForm.classList.remove('active');
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+  </script>
+</body>
+</html>

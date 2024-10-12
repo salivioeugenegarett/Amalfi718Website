@@ -1,0 +1,15 @@
+CREATE TABLE User (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password BLOB NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address VARCHAR(250) NOT NULL,
+    datein DATE,
+    timein TIME,
+    dateout DATE,
+    timeout TIME,
+    room VARCHAR(50),
+    guestadult INT,
+    guestchild INT,
+);

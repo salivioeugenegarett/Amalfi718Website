@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" type="image/x-icon">
+    <title>Room Booking Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .booking-form, .booking-summary {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            border: 2px solid #800000;
+            flex: 1;
+        }
+        .booking-form {
+            margin-right: 40px;
+        }
+        .booking-form h2, .booking-summary h2 {
+            color: #800000; 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group select {
+            background-color: #fff;
+        }
+        .form-group input[type="number"] {
+            max-width: 100px;
+        }
+        .form-group .room-options {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-group .room-options select {
+            width: 48%;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #800000;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #a52a2a;
+        }
+
+        .room-details {
+            margin-bottom: 20px;
+        }
+        .room-details img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .room-details h3 {
+            color: #800000; 
+            margin: 10px 0;
+        }
+        .room-details p {
+            color: #333;
+        }
+
+        .booking-summary {
+            flex-basis: 30%;
+        }
+        .summary-item, .availability-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .summary-item:last-child, .availability-item:last-child {
+            border-bottom: none;
+        }
+        .availability-status {
+            color: #28a745; 
+            font-weight: bold;
+        }
+        .unavailable-status {
+            color: #dc3545; 
+            font-weight: bold;
+        }
+
+
+        .modal {
+    display: none;
+    position: fixed; 
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.pay-btn {
+    background-color: maroon;
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    margin: 20px auto; 
+    cursor: pointer; 
+    border-radius: 5px; 
+    width: 100%;
+}
+
+.pay-btn:hover {
+    background-color: #800000; 
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.payment-details {
+    margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="booking-form">
+        <h2>Book Your Stay</h2>
+        <form action="/pay" method="POST">
+
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="room">Select Room</label>
+                    <select id="room" name="room" required onchange="checkAvailability(); updateSummary()">
+                        <option value="">Choose a room</option>
+                        <option value="Standard">Standard Room</option>
+                        <option value="Superior">Superior Room</option>
+                        <option value="Suite">Suite Room</option>
+                        <option value="Deluxe">Deluxe Room</option>
+                        <option value="ESuite">E. Suite Room</option>
+                    </select>
+                </div>    
+    
+                <div class="form-group">
+                    <label for="datein">Date In:</label>
+                    <input type="date" id="datein" name="datein" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="timein">Time In:</label>
+                    <input type="time" id="timein" name="timein" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="dateout">Date Out:</label>
+                    <input type="date" id="dateout" name="dateout" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="timeout">Time Out:</label>
+                    <input type="time" id="timeout" name="timeout" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="guestadult">Guests (Adults):</label>
+                    <input type="number" id="guestadult" name="guestadult" required onchange="updateSummary()">
+                </div>
+    
+                <div class="form-group">
+                    <label for="guestchild">Guests (Children):</label>
+                    <input type="number" id="guestchild" name="guestchild" required onchange="updateSummary()">
+                </div>
+
+                <div class="form-group">
+                    <label for="request">Special Requests:</label>
+                    <textarea id="request" name="request"></textarea>
+                </div>
+
+            <input type="hidden" name="hidden_total_price" id="hidden_total_price">
+
+            <button type="submit" class="pay-btn">Submit</button>
+            <button type="button" class="pay-btn" onclick="document.getElementById('addBookingModal').style.display='none'">Cancel</button>
+        </form>
+    </div>
+    
+
+<div class="booking-summary">
+    <h2>Booking Summary</h2>
+    <div id="room-details" class="room-details">
+        <h2>Room Details</h2>
+        <img id="room-image" src="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.jpg') }}" alt="Room Image">
+        <h3 id="room-name">Amalfi 718 Hotel</h3>
+        <p id="room-description">Your Business and Leisure Boutique Hotel in Lipa City</p>
+    </div>
+    <div id="summary">
+        <div class="summary-item">Check-In Date: <span id="summary-check-in">N/A</span></div>
+        <div class="summary-item">Check-In Time: <span id="summary-check-in-time">N/A</span></div>
+        <div class="summary-item">Check-Out Date: <span id="summary-check-out">N/A</span></div>
+        <div class="summary-item">Check-Out Time: <span id="summary-check-out-time">N/A</span></div>
+        <div class="summary-item">Room: <span id="summary-room">N/A</span></div>
+        <div class="summary-item">Adults: <span id="summary-adults">1</span></div>
+        <div class="summary-item">Children: <span id="summary-children">0</span></div>
+        <div class="summary-item">Additional Requests: <span id="summary-requests">N/A</span></div>
+        <div class="summary-item">Total Amount: <span id="summary-total-price">N/A</span></div>
+    </div>
+    
+    <h2>Room Availability</h2>
+    <div id="availability">
+        <div class="availability-item">Standard: <span class="availability-status">Available</span></div>
+        <div class="availability-item">Superior: <span class="availability-status">Available</span></div>
+        <div class="availability-item">Deluxe: <span class="unavailable-status">Unavailable</span></div>
+        <div class="availability-item">Suite: <span class="availability-status">Available</span></div>
+        <div class="availability-item">ESuite: <span class="unavailable-status">Unavailable</span></div>
+    </div>
+</div>
+
+<script>
+    function updateSummary() {
+    const roomSelect = document.getElementById("room");
+    const selectedRoom = roomSelect.options[roomSelect.selectedIndex].value;
+    const checkInDate = document.getElementById("datein").value ? new Date(document.getElementById("datein").value) : null;
+    const checkOutDate = document.getElementById("dateout").value ? new Date(document.getElementById("dateout").value) : null;
+    
+    const roomPricePerDay = {
+        Standard: 2900,
+        Superior: 3200,
+        Deluxe: 3500,
+        Suite: 3700,
+        ESuite: 4200
+    };
+
+    let days = 0;
+    if (checkInDate && checkOutDate) {
+        days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    }
+
+    const pricePerDay = roomPricePerDay[selectedRoom] || 0;
+    const totalPrice = days * pricePerDay;
+    
+    document.getElementById("summary-check-in").innerText = document.getElementById("datein").value || 'N/A';
+    document.getElementById("summary-check-in-time").innerText = document.getElementById("timein").value || 'N/A';
+    document.getElementById("summary-check-out").innerText = document.getElementById("dateout").value || 'N/A';
+    document.getElementById("summary-check-out-time").innerText = document.getElementById("timeout").value || 'N/A';
+    document.getElementById("summary-room").innerText = roomSelect.options[roomSelect.selectedIndex].text || 'N/A';
+    document.getElementById("summary-adults").innerText = document.getElementById("guestadult").value;
+    document.getElementById("summary-children").innerText = document.getElementById("guestchild").value;
+    document.getElementById("summary-requests").innerText = document.getElementById("request").value || 'N/A'; // Changed to 'request'
+    document.getElementById("summary-total-price").innerText = totalPrice ? `₱${totalPrice}` : 'N/A';
+
+    document.getElementById("hidden_total_price").value = totalPrice;
+
+    const roomDetails = {
+        Standard: {
+            name: "Standard Room",
+            image: "{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}",
+            description: "A cozy room with a single bed, perfect for solo travelers."
+        },
+        Superior: {
+            name: "Superior Room",
+            image: "{{ url_for('static', filename='images/Superior-Room Cover.jpg') }}",
+            description: "A comfortable room with a double bed, ideal for couples."
+        },
+        Suite: {
+            name: "Suite Room",
+            image: "{{ url_for('static', filename='images/Suite_Room Cover.jpg') }}",
+            description: "A luxurious suite with extra space and premium amenities."
+        },
+        Deluxe: {
+            name: "Deluxe Room",
+            image: "{{ url_for('static', filename='images/Suite_Room Cover.jpg') }}",
+            description: "A deluxe room offering a higher level of comfort and style."
+        },
+        ESuite: {
+            name: "E.Suite Room",
+            image: "{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}",
+            description: "A spacious room designed for families with multiple beds."
+        }
+    };
+
+    if (selectedRoom in roomDetails) {
+        document.getElementById("room-name").innerText = roomDetails[selectedRoom].name;
+        document.getElementById("room-image").src = roomDetails[selectedRoom].image;
+        document.getElementById("room-description").innerText = roomDetails[selectedRoom].description;
+    } else {
+        document.getElementById("room-name").innerText = "Amalfi 718 Hotel";
+        document.getElementById("room-image").src = "{{ url_for('static', filename='images/Amalfi718Hotel_Logo.jpg') }}";
+        document.getElementById("room-description").innerText = "Your Business and Leisure Boutique Hotel in Lipa City";
+    }
+
+    console.log(`Hidden total price: ${totalPrice}`);
+
+    document.getElementById("summary-total-price").innerText = totalPrice > 0 ? `${totalPrice} PHP` : 'N/A';
+
+    return true;
+}
+
+
+function populateModalSummary() {
+    const checkInDate = new Date(document.getElementById("datein").value);
+    const checkOutDate = new Date(document.getElementById("dateout").value);
+    const days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    const selectedRoom = document.getElementById("room").value;
+    const roomPricePerDay = {
+        Standard: 2900,
+        Superior: 3200,
+        Deluxe: 3500,
+        Suite: 3700,
+        ESuite: 4200
+    };
+    const pricePerDay = roomPricePerDay[selectedRoom] || 0;
+    const totalPrice = days * pricePerDay;
+
+    const summaryHtml = `
+        <p>Check-In Date: ${document.getElementById("summary-check-in").innerText}</p>
+        <p>Check-In Time: ${document.getElementById("summary-check-in-time").innerText}</p>
+        <p>Check-Out Date: ${document.getElementById("summary-check-out").innerText}</p>
+        <p>Check-Out Time: ${document.getElementById("summary-check-out-time").innerText}</p>
+        <p>Room: ${document.getElementById("summary-room").innerText}</p>
+        <p>Adults: ${document.getElementById("summary-adults").innerText}</p>
+        <p>Children: ${document.getElementById("summary-children").innerText}</p>
+        <p>Additional Requests: ${document.getElementById("summary-requests").innerText}</p>
+        <p>Price per Day: ${pricePerDay.toFixed(2)} pesos</p>
+        <p>Total Price: ${totalPrice.toFixed(2)} pesos</p>
+    `;
+    document.getElementById("modal-summary").innerHTML = summaryHtml;
+}
+
+function checkAvailability() {
+
+}
+
+function openModal() {
+    document.getElementById("booking-modal").style.display = "block";
+    populateModalSummary();
+}
+
+function closeModal() {
+    document.getElementById("booking-modal").style.display = "none";
+}
+
+document.getElementById("booking-form").addEventListener("submit", function(event) {
+    event.preventDefault(); 
+    openModal();
+});
+
+
+</script>
+
+</body>
+</html>
