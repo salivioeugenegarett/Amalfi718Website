@@ -1,6 +1,6 @@
 import requests
 import os
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_file
 from datetime import datetime, date, time
 from sqlalchemy import Date, Time
 from flask_sqlalchemy import SQLAlchemy
@@ -482,7 +482,12 @@ def pay():
         else:
             return f"Failed to create payment link: {response.text}", response.status_code
         
-
+@app.route('/backup')
+def backup():
+    database_file = 'users.db'
+    if os.path.exists(database_file):
+        return send_file(database_file, as_attachment=True)
+    return abort(404)
 
 if __name__ == '__main__':
     with app.app_context():
