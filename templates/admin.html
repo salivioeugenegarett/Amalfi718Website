@@ -116,8 +116,12 @@
         <h2>Admin Page</h2>
         <button class="btn" onclick="location.href='/logout'">Log Out</button>
         <button class="btn" onclick="document.getElementById('addBookingModal').style.display='block'">Add Booking</button>
+        
+        <input type="text" id="searchInput" placeholder="Search by name, phone, or email" onkeyup="searchTable()">
 
-        <table>
+        </form>
+        
+        <table id="bookingTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -211,6 +215,19 @@
         </div>
     </div>
 
+    <div id="noResultsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="document.getElementById('noResultsModal').style.display='none'">&times;</span>
+                <h3>No Results Found</h3>
+            </div>
+            <div class="modal-body">
+                <p>Invalid search details. Please try again.</p>
+            </div>
+        </div>
+    </div>
+    
+
     <script>
         function editBooking(id) {
 
@@ -256,6 +273,39 @@
             // Update the total price display
             document.getElementById("hidden_total_price").innerText = totalPrice ? totalPrice : 'N/A';
         }
+
+
+        function searchTable() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const table = document.getElementById("bookingTable");
+    const tr = table.getElementsByTagName("tr");
+    let hasResults = false;
+
+    for (let i = 1; i < tr.length; i++) { 
+        const tdName = tr[i].getElementsByTagName("td")[1];
+        const tdEmail = tr[i].getElementsByTagName("td")[2];
+        const tdPhone = tr[i].getElementsByTagName("td")[3];
+
+        if (tdName || tdEmail || tdPhone) {
+            const nameText = tdName.textContent.toLowerCase();
+            const emailText = tdEmail.textContent.toLowerCase();
+            const phoneText = tdPhone.textContent.toLowerCase();
+
+            if (nameText.includes(input) || emailText.includes(input) || phoneText.includes(input)) {
+                tr[i].style.display = "";
+                hasResults = true;
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    if (!hasResults && input) {
+        document.getElementById('noResultsModal').style.display = 'block';
+    } else {
+        document.getElementById('noResultsModal').style.display = 'none';
+    }
+}
 
     </script>
 </body>

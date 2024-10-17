@@ -1,8 +1,8 @@
 import requests
 import os
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_file
-from datetime import datetime, date, time
-from sqlalchemy import Date, Time
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from datetime import datetime
+from sqlalchemy import DateTime
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 from functools import wraps
 
-load_dotenv('.env')
+load_dotenv('HT.env')
 
 encryption_key = os.getenv('ENCRYPTION_KEY')
 fernet = Fernet(encryption_key.encode())
@@ -40,10 +40,10 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.LargeBinary, nullable=False) 
     address = db.Column(db.LargeBinary, nullable=False)
-    datein = db.Column(Date, nullable=False)
-    timein = db.Column(Time, nullable=False) 
-    dateout = db.Column(Date, nullable=False)
-    timeout = db.Column(Time, nullable=False)          
+    datein = db.Column(DateTime) 
+    timein = db.Column(DateTime) 
+    dateout = db.Column(DateTime)                
+    timeout = db.Column(DateTime)            
     room = db.Column(db.String(50))          
     guestadult = db.Column(db.Integer)        
     guestchild = db.Column(db.Integer)        
@@ -102,30 +102,13 @@ def reset_password():
 @app.route('/user-interface')
 def user_interface():
     user_email = session.get('user_email')
-        
+
     if user_email:
         bookings = User.query.filter_by(email=user_email).all()
-        decrypted_bookings = []
-        for booking in bookings:
-            decrypted_bookings.append({
-                'id': booking.id,
-                'name': booking.decrypt_name(),
-                'email': booking.email,
-                'phone': booking.decrypt_phone(),
-                'address': booking.decrypt_address(),
-                'datein': booking.datein,
-                'timein': booking.timein,
-                'dateout': booking.dateout,
-                'timeout': booking.timeout,
-                'room': booking.room,
-                'guestadult': booking.guestadult,
-                'guestchild': booking.guestchild,
-                'request': booking.request,
-            })
     else:
-        decrypted_bookings = []
+        bookings = []
 
-    return render_template('userinterface.html', bookings=decrypted_bookings)
+    return render_template('userinterface.html', bookings=bookings)
 
 @app.route('/admin-login')
 def admin_login():
@@ -191,6 +174,7 @@ def add_booking():
     guestchild = request.form['guestchild']
     request_text = request.form['request']
 
+    # Encrypt sensitive information
     encrypted_name = fernet.encrypt(name.encode())
     encrypted_phone = fernet.encrypt(phone.encode())
     encrypted_address = fernet.encrypt(address.encode())
@@ -201,10 +185,10 @@ def add_booking():
         password=bcrypt.generate_password_hash(password).decode('utf-8'),
         phone=encrypted_phone, 
         address=encrypted_address,
-        datein=date.fromisoformat(datein),
-        timein=time.fromisoformat(timein),
-        dateout=date.fromisoformat(dateout), 
-        timeout=time.fromisoformat(timeout),
+        datein=datetime.strptime(datein, '%Y-%m-%d'),  
+        timein=datetime.strptime(timein, '%H:%M'), 
+        dateout=datetime.strptime(dateout, '%Y-%m-%d'), 
+        timeout=datetime.strptime(timeout, '%H:%M'), 
         room=room, 
         guestadult=int(guestadult), 
         guestchild=int(guestchild), 
@@ -245,10 +229,10 @@ def add_book():
         password=bcrypt.generate_password_hash(password).decode('utf-8'),
         phone=encrypted_phone, 
         address=encrypted_address,
-        datein=date.fromisoformat(datein),
-        timein=time.fromisoformat(timein),
-        dateout=date.fromisoformat(dateout), 
-        timeout=time.fromisoformat(timeout),
+        datein=datetime.strptime(datein, '%Y-%m-%d'),  
+        timein=datetime.strptime(timein, '%H:%M'), 
+        dateout=datetime.strptime(dateout, '%Y-%m-%d'), 
+        timeout=datetime.strptime(timeout, '%H:%M'), 
         room=room, 
         guestadult=int(guestadult),
         guestchild=int(guestchild), 
@@ -287,14 +271,15 @@ def edit_booking(id):
             return redirect(url_for('admin_page'))
 
     if request.method == 'POST':
+        # Update the booking details
         booking.name = fernet.encrypt(request.form['name'].encode())
         booking.email = request.form['email']
         booking.phone = fernet.encrypt(request.form['phone'].encode())
         booking.address = fernet.encrypt(request.form['address'].encode())
-        booking.datein = date.fromisoformat(request.form['datein'])
-        booking.timein = time.fromisoformat(request.form['timein'])
-        booking.dateout = date.fromisoformat(request.form['dateout'])
-        booking.timeout = time.fromisoformat(request.form['timeout'])
+        booking.datein = datetime.strptime(request.form['datein'], '%Y-%m-%d')
+        booking.timein = datetime.strptime(request.form['timein'], '%H:%M')
+        booking.dateout = datetime.strptime(request.form['dateout'], '%Y-%m-%d')
+        booking.timeout = datetime.strptime(request.form['timeout'], '%H:%M')
         booking.room = request.form['room']
         booking.guestadult = request.form['guestadult']
         booking.guestchild = request.form['guestchild']
@@ -303,34 +288,6 @@ def edit_booking(id):
         db.session.commit()
         flash('Booking updated successfully!', 'success')
         return redirect(url_for('admin_page'))
-
-@app.route('/useredit-booking/<int:id>', methods=['GET', 'POST'])
-def useredit_booking(id):
-    booking = User.query.get(id)
-    if request.method == 'GET':
-        if booking:
-            return render_template('edit_booking.html', booking=booking)
-        else:
-            flash('Booking not found.', 'danger')
-            return redirect(url_for('user_interface'))
-
-    if request.method == 'POST':
-        booking.name = fernet.encrypt(request.form['name'].encode())
-        booking.email = request.form['email']
-        booking.phone = fernet.encrypt(request.form['phone'].encode())
-        booking.address = fernet.encrypt(request.form['address'].encode())
-        booking.datein = date.fromisoformat(request.form['datein'])
-        booking.timein = time.fromisoformat(request.form['timein'])
-        booking.dateout = date.fromisoformat(request.form['dateout'])
-        booking.timeout = time.fromisoformat(request.form['timeout'])
-        booking.room = request.form['room']
-        booking.guestadult = request.form['guestadult']
-        booking.guestchild = request.form['guestchild']
-        booking.request = request.form['request']
-
-        db.session.commit()
-        flash('Booking updated successfully!', 'success')
-        return redirect(url_for('user_interface'))
 
 
 @app.route('/logout')
@@ -405,10 +362,10 @@ def pay():
         existing_user.name = encrypted_name
         existing_user.phone = encrypted_phone
         existing_user.address = encrypted_address
-        existing_user.datein = date.fromisoformat(request.form['datein'])
-        existing_user.timein = time.fromisoformat(request.form['timein'])
-        existing_user.dateout = date.fromisoformat(request.form['dateout'])
-        existing_user.timeout = time.fromisoformat(request.form['timeout'])
+        existing_user.datein = datetime.strptime(datein, '%Y-%m-%d')
+        existing_user.timein = datetime.strptime(timein, '%H:%M')
+        existing_user.dateout = datetime.strptime(dateout, '%Y-%m-%d')
+        existing_user.timeout = datetime.strptime(timeout, '%H:%M')
         existing_user.room = room
         existing_user.guestadult = int(guestadult)
         existing_user.guestchild = int(guestchild)
@@ -422,10 +379,10 @@ def pay():
             password=hashed_password,
             phone=encrypted_phone, 
             address=encrypted_address,
-            datein=date.fromisoformat(datein),
-            timein=time.fromisoformat(timein),
-            dateout=date.fromisoformat(dateout), 
-            timeout=time.fromisoformat(timeout),
+            datein=datetime.strptime(datein, '%Y-%m-%d'),  
+            timein=datetime.strptime(timein, '%H:%M'), 
+            dateout=datetime.strptime(dateout, '%Y-%m-%d'), 
+            timeout=datetime.strptime(timeout, '%H:%M'), 
             room=room, 
             guestadult=int(guestadult),
             guestchild=int(guestchild), 
@@ -482,17 +439,6 @@ def pay():
         else:
             return f"Failed to create payment link: {response.text}", response.status_code
         
-@app.route('/backup')
-def backup():
-    database_file = 'users.db'
-    if os.path.exists(database_file):
-        return send_file(database_file, as_attachment=True)
-    return abort(404)
-
-
-
-
-
 
 
 if __name__ == '__main__':
