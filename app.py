@@ -1,8 +1,9 @@
 import requests
 import os
+import vonage
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_file
 from datetime import datetime, date, time
-from sqlalchemy import Date, Time
+from sqlalchemy import Date, Time, and_, func
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
@@ -98,6 +99,7 @@ def booking():
 @app.route('/reset-password')
 def reset_password():
     return render_template('reset_password.html')
+
 
 @app.route('/user-interface')
 def user_interface():
@@ -233,7 +235,6 @@ def add_book():
     room = request.form['room']
     guestadult = request.form['guestadult']
     guestchild = request.form['guestchild']
-    request_text = request.form['request']
 
     encrypted_name = fernet.encrypt(name.encode())
     encrypted_phone = fernet.encrypt(phone.encode())
@@ -252,7 +253,6 @@ def add_book():
         room=room, 
         guestadult=int(guestadult),
         guestchild=int(guestchild), 
-        request=request_text
     )
 
     db.session.add(new_user)
@@ -393,7 +393,6 @@ def pay():
     room = request.form['room']
     guestadult = request.form['guestadult']
     guestchild = request.form['guestchild']
-    request_text = request.form['request']
 
     encrypted_name = fernet.encrypt(name.encode())
     encrypted_phone = fernet.encrypt(phone.encode())
@@ -412,7 +411,6 @@ def pay():
         existing_user.room = room
         existing_user.guestadult = int(guestadult)
         existing_user.guestchild = int(guestchild)
-        existing_user.request = request_text
         
         db.session.commit()
     else:
@@ -429,7 +427,6 @@ def pay():
             room=room, 
             guestadult=int(guestadult),
             guestchild=int(guestchild), 
-            request=request_text
         )
 
         db.session.add(new_user)
@@ -451,9 +448,23 @@ def pay():
             total_amount = 0
             print("Failed to convert total_price to an integer, using total_amount = 0")
 
-
     if request.method == 'POST':
+        client = vonage.Client(key="0275150b", secret="BqazgTkjKFGS5AIc")
+        sms = vonage.Sms(client)
+        
+        responseData = sms.send_message(
+            {
+                "from": "Amalfi 718 Hotel",
+                "to": "639673671662",
+                "text": "Amalfi 718 Hotel\n\nHello " + name + ".\nYou successfully paid Php " + str(total_amount) + ".\n" + "Details:\nRoom Type: " + room + "Room\nCheck In: " + str(datein)+ "\nCheck Out: " + str(dateout) + "\n\nThankyou for using InstaReserve.\n",
+            }
+        )
 
+        if responseData["messages"][0]["status"] == "0":
+            print("Message sent successfully.")
+        else:
+            print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
+            
         url = "https://api.paymongo.com/v1/links"
         headers = {
             "accept": "application/json",
@@ -490,8 +501,33 @@ def backup():
     return abort(404)
 
 
+def check_room_availability(room, datein, dateout):
+    # Convert date strings to datetime objects
+    date_in = datetime.strptime(datein, '%Y-%m-%d')
+    date_out = datetime.strptime(dateout, '%Y-%m-%d')
 
+    # Query the database to check if the room is available
+    reservations = User.query.filter(
+        User.room == room,  # Use 'room' variable instead of 'room_type'
+        and_(
+            User.datein < date_out,  # Check if the current booking ends before the new booking starts
+            User.dateout > date_in   # Check if the current booking starts after the new booking ends
+        )
+    ).all()
 
+    # If any reservations exist for this room in the date range, it's unavailable
+    return len(reservations) == 0  # Return True if no reservations, else False
+
+@app.route('/check-availability')
+def check_availability():
+    room = request.args.get('room')  # The room type or identifier
+    datein = request.args.get('datein')  # Check-in date
+    dateout = request.args.get('dateout')  # Check-out date
+
+    # Perform the logic to check if the room is available for the given dates
+    available = check_room_availability(room, datein, dateout)
+
+    return jsonify({'available': available})
 
 
 

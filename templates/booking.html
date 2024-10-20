@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" type="image/x-icon">
-    <title>Room Booking Form</title>
+    <title>Room Reservation Form</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -181,7 +181,7 @@
 <body>
 
     <div class="booking-form">
-        <h2>Book Your Stay</h2>
+        <h2>Make a Reservation</h2>
         <form action="/pay" method="POST">
 
                 <div class="form-group">
@@ -217,7 +217,6 @@
                         <option value="Superior">Superior Room</option>
                         <option value="Suite">Suite Room</option>
                         <option value="Deluxe">Deluxe Room</option>
-                        <option value="ESuite">E. Suite Room</option>
                     </select>
                 </div>    
     
@@ -251,11 +250,6 @@
                     <input type="number" id="guestchild" name="guestchild" required onchange="updateSummary()">
                 </div>
 
-                <div class="form-group">
-                    <label for="request">Special Requests:</label>
-                    <textarea id="request" name="request"></textarea>
-                </div>
-
             <input type="hidden" name="hidden_total_price" id="hidden_total_price">
 
             <button type="submit" class="pay-btn">Submit</button>
@@ -265,7 +259,7 @@
     
 
 <div class="booking-summary">
-    <h2>Booking Summary</h2>
+    <h2>Reservation Summary</h2>
     <div id="room-details" class="room-details">
         <h2>Room Details</h2>
         <img id="room-image" src="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.jpg') }}" alt="Room Image">
@@ -280,18 +274,17 @@
         <div class="summary-item">Room: <span id="summary-room">N/A</span></div>
         <div class="summary-item">Adults: <span id="summary-adults">1</span></div>
         <div class="summary-item">Children: <span id="summary-children">0</span></div>
-        <div class="summary-item">Additional Requests: <span id="summary-requests">N/A</span></div>
         <div class="summary-item">Total Amount: <span id="summary-total-price">N/A</span></div>
     </div>
     
     <h2>Room Availability</h2>
     <div id="availability">
-        <div class="availability-item">Standard: <span class="availability-status">Available</span></div>
-        <div class="availability-item">Superior: <span class="availability-status">Available</span></div>
-        <div class="availability-item">Deluxe: <span class="unavailable-status">Unavailable</span></div>
-        <div class="availability-item">Suite: <span class="availability-status">Available</span></div>
-        <div class="availability-item">ESuite: <span class="unavailable-status">Unavailable</span></div>
+        <div class="availability-item">Standard: <span id="status-standard">Loading...</span></div>
+        <div class="availability-item">Superior: <span id="status-superior">Loading...</span></div>
+        <div class="availability-item">Deluxe: <span id="status-deluxe">Loading...</span></div>
+        <div class="availability-item">Suite: <span id="status-suite">Loading...</span></div>
     </div>
+    
 </div>
 
 <script>
@@ -306,7 +299,6 @@
         Superior: 3200,
         Deluxe: 3500,
         Suite: 3700,
-        ESuite: 4200
     };
 
     let days = 0;
@@ -324,7 +316,6 @@
     document.getElementById("summary-room").innerText = roomSelect.options[roomSelect.selectedIndex].text || 'N/A';
     document.getElementById("summary-adults").innerText = document.getElementById("guestadult").value;
     document.getElementById("summary-children").innerText = document.getElementById("guestchild").value;
-    document.getElementById("summary-requests").innerText = document.getElementById("request").value || 'N/A'; // Changed to 'request'
     document.getElementById("summary-total-price").innerText = totalPrice ? `₱${totalPrice}` : 'N/A';
 
     document.getElementById("hidden_total_price").value = totalPrice;
@@ -349,11 +340,6 @@
             name: "Deluxe Room",
             image: "{{ url_for('static', filename='images/Suite_Room Cover.jpg') }}",
             description: "A deluxe room offering a higher level of comfort and style."
-        },
-        ESuite: {
-            name: "E.Suite Room",
-            image: "{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}",
-            description: "A spacious room designed for families with multiple beds."
         }
     };
 
@@ -384,8 +370,7 @@ function populateModalSummary() {
         Standard: 2900,
         Superior: 3200,
         Deluxe: 3500,
-        Suite: 3700,
-        ESuite: 4200
+        Suite: 3700
     };
     const pricePerDay = roomPricePerDay[selectedRoom] || 0;
     const totalPrice = days * pricePerDay;
@@ -398,7 +383,6 @@ function populateModalSummary() {
         <p>Room: ${document.getElementById("summary-room").innerText}</p>
         <p>Adults: ${document.getElementById("summary-adults").innerText}</p>
         <p>Children: ${document.getElementById("summary-children").innerText}</p>
-        <p>Additional Requests: ${document.getElementById("summary-requests").innerText}</p>
         <p>Price per Day: ${pricePerDay.toFixed(2)} pesos</p>
         <p>Total Price: ${totalPrice.toFixed(2)} pesos</p>
     `;
@@ -406,7 +390,41 @@ function populateModalSummary() {
 }
 
 function checkAvailability() {
+    const room = document.getElementById("room").value;
+    const dateIn = document.getElementById("datein").value;
+    const dateOut = document.getElementById("dateout").value;
 
+    if (room && dateIn && dateOut) {
+        console.log(`Checking availability for ${room} from ${dateIn} to ${dateOut}`);
+
+        fetch(`/check-availability?room=${room}&datein=${dateIn}&dateout=${dateOut}`)
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Network response was not ok:', response.statusText);
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Availability data received:', data);
+                const statusElement = document.getElementById(`status-${room.toLowerCase()}`);
+
+                if (data.available) {
+                    statusElement.innerText = "Available";
+                    statusElement.classList.remove("unavailable-status");
+                    statusElement.classList.add("availability-status");
+                } else {
+                    statusElement.innerText = "Not Available";
+                    statusElement.classList.remove("availability-status");
+                    statusElement.classList.add("unavailable-status");
+                }
+            })
+            .catch(error => {
+                console.error('Error checking availability:', error);
+            });
+    } else {
+        console.warn('Room, dateIn, or dateOut is not provided.');
+    }
 }
 
 function openModal() {

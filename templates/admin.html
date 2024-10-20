@@ -116,7 +116,7 @@
         <h2>Admin Page</h2>
         <button class="btn" onclick="location.href='/logout'">Log Out</button>
         <button class="btn" onclick="document.getElementById('addBookingModal').style.display='block'">Add Booking</button>
-        
+        <button class="btn" onclick="location.href='https://dashboard.paymongo.com/home'">Paymongo Dashboard</button>
         <input type="text" id="searchInput" placeholder="Search by name, phone, or email" onkeyup="searchTable()">
 
         </form>
@@ -135,7 +135,7 @@
                     <th>Time Out</th>
                     <th>Guests (Adults)</th>
                     <th>Guests (Children)</th>
-                    <th>Special Requests</th>
+                    <th>Extra Bed</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -189,7 +189,6 @@
                         <option value="Superior">Superior Room</option>
                         <option value="Suite">Suite Room</option>
                         <option value="Deluxe">Deluxe Room</option>
-                        <option value="ESuite">E. Suite Room</option>
                     </select><br>
                     <label for="datein">Date In:</label>
                     <input type="date" id="datein" name="datein" required onchange="updateSummary()"><br>
@@ -257,7 +256,6 @@
                 Superior: 3200,
                 Deluxe: 3500,
                 Suite: 3700,
-                ESuite: 4200
             };
 
             let days = 0;

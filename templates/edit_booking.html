@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Booking</title>
     <link rel="icon" href="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            color: #800000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #800000;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #a52a2a;
+        }
+    </style>
+
 </head>
 <body>
     <div class="container">
@@ -67,14 +121,33 @@
             </div>
 
             <div class="form-group">
-                <label for="request">Special Requests:</label>
-                <textarea class="form-control" id="request" name="request">{{ booking.request }}</textarea>
+                <label for="request">Extra Bed:</label>
+                <input type="number" class="form-control" id="request" name="request" value="0" min="0" onchange="calculateTotal()">
             </div>
+
+            <div class="total-cost" id="totalCost"></div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
 
-    <!-- Add your JS scripts here -->
+    <script>
+        function calculateTotal() {
+            const dateIn = new Date(document.getElementById('datein').value);
+            const dateOut = new Date(document.getElementById('dateout').value);
+            const extraBeds = parseInt(document.getElementById('request').value) || 0;
+            const costPerBed = 950; 
+            const totalCostElem = document.getElementById('totalCost');
+
+            if (dateIn && dateOut && dateOut > dateIn) {
+                const timeDiff = dateOut - dateIn;
+                const days = timeDiff / (1000 * 3600 * 24); // Calculate days
+                const totalCost = days * extraBeds * costPerBed;
+                totalCostElem.innerText = `Total Cost for Extra Beds: ${totalCost} pesos`;
+            } else {
+                totalCostElem.innerText = '';
+            }
+        }
+    </script>
 </body>
 </html>

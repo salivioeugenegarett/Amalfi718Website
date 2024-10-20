@@ -37,14 +37,18 @@
         </div>
         <h2 class="room-type">Standard Room</h2>
         <p class="room-price">Php 2,900.00</p>
+        <p class="room-guest">Average: 2 Guest | 1 Child</p>
         <ul class="room-features">
           <li>1 Full Bed</li>
+          <li>16m² Room Size</li>
           <li>Air Conditioning</li>
           <li>Private Bathroom</li>
+          <li>Flat-screen TV</li>
+          <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
           <span class="availability">Available</span>
-          <a href="/standard-room" class="book-btn">Book</a>
+          <a href="/standard-room" class="book-btn">Reserve</a>
         </div>
       </div>
       <div class="room">
@@ -53,14 +57,18 @@
         </div>
         <h2 class="room-type">Superior Room</h2>
         <p class="room-price">Php 3,200.00</p>
+        <p class="room-guest">Average: 2 Guest | 1 Child</p>
         <ul class="room-features">
           <li>1 Full Bed</li>
+          <li>18m² Room Size</li>
           <li>Air Conditioning</li>
           <li>Private Bathroom</li>
+          <li>Flat-screen TV</li>
+          <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
           <span class="availability">Available</span>
-          <a href="/superior-room" class="book-btn">Book</a>
+          <a href="/superior-room" class="book-btn">Reserve</a>
         </div>
       </div>
       <div class="room">
@@ -69,14 +77,18 @@
         </div>
         <h2 class="room-type">Deluxe Room</h2>
         <p class="room-price">Php 3,500.00</p>
+        <p class="room-guest">Average: 2 Guest | 1 Child</p>
         <ul class="room-features">
-          <li>1 Full Bed</li>
+          <li>1 Queen Bed</li>
+          <li>22m² Room Size</li>
           <li>Air Conditioning</li>
           <li>Private Bathroom</li>
+          <li>Flat-screen TV</li>
+          <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
           <span class="availability">Available</span>
-          <a href="/deluxe-room" class="book-btn">Book</a>
+          <a href="/deluxe-room" class="book-btn">Reserve</a>
         </div>
       </div>
       <div class="room">
@@ -85,34 +97,128 @@
         </div>
         <h2 class="room-type">Suite Room</h2>
         <p class="room-price">Php 3,700.00</p>
+        <p class="room-guest">Average: 2 Guest | 1 Child</p>
         <ul class="room-features">
-          <li>1 Full Bed</li>
+          <li>1 Queen Bed</li>
+          <li>Private Suite</li>
+          <li>22m² Room Size</li>
+          <li>Pool View</li>
           <li>Air Conditioning</li>
           <li>Private Bathroom</li>
+          <li>Flat-screen TV</li>
+          <li>Terrace</li>
+          <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
           <span class="availability">Available</span>
-          <a href="/suite-room" class="book-btn">Book</a>
+          <a href="/suite-room" class="book-btn">Reserve</a>
         </div>
       </div>
-      <div class="room">
-        <div class="room-image">
-          <img src="{{ url_for('static', filename='images/Standard-Room Cover.jpg') }}" alt="E.Suite Room">
-        </div>
-        <h2 class="room-type">E.Suite Room</h2>
-        <p class="room-price">Php 4,200.00</p>
-        <ul class="room-features">
-          <li>1 Full Bed</li>
-          <li>Air Conditioning</li>
-          <li>Private Bathroom</li>
+
+
+      <div class="bar-line"></div>
+
+<h1 style="padding-right: 4px;">Facilities & Services</h1>
+<div class="info-section-above">
+    <div class="container round-edge">
+        <h2>Popular Facilities</h2>
+        <ul>
+            <li>Bar</li>
+            <li>Restaurant</li>
+            <li>WiFi</li>
+            <li>Swimming Pool</li>
+            <li>24-hour Front Desk</li>
+            <li>Luggage Storage</li>
         </ul>
-        <div class="room-footer">
-          <span class="availability">Available</span>
-          <a href="/esuite-room" class="book-btn">Book</a>
-        </div>
-      </div>
-    </section>
-  </main>
+    </div>
+
+    <div class="container round-edge">
+        <h2>General</h2>
+        <ul>
+            <li>Free Parking</li>
+            <li>Air Conditioning</li>
+            <li>Designated Smoking Area</li>
+            <li>Central Heating</li>
+            <li>Communal Refrigerator</li>
+            <li>Fireplace</li>
+            <li>Housekeeping</li>
+        </ul>
+    </div>
+
+    <div class="container round-edge">
+        <h2>Safety & Security</h2>
+        <ul>
+            <li>Fire Extinguisher</li>
+            <li>Fire Alarm</li>
+            <li>Security Alarm</li>
+        </ul>
+    </div>
+
+    <div class="container round-edge">
+        <h2>Cleaning Services</h2>
+        <ul>
+            <li>Laundry Service</li>
+            <li>Daily Housekeeping</li>
+        </ul>
+    </div>
+</div>
+
+<h2>Property Policies</h2>
+<div class="info-section-above">
+    <div class="container round-edge">
+      <h2>Special Request Policy</h2>
+      <p><strong>Prices for special request aren't included in the total price. They'll have to be paid for separately during your stay.</strong></p>
+      <table class="policy-table">
+          <thead>
+              <tr>
+                  <th>Special Request</th>
+                  <th>Fees</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>Extra bed upon request</td>
+                  <td>Php 950 per person, per night</td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+
+    <div class="container round-edge">
+        <h2>Child Policy</h2>
+        <p><strong>Children must be aged 4 and above to stay at the property.</strong></p>
+        <table class="policy-table">
+            <thead>
+                <tr>
+                    <th>Age</th>
+                    <th>Fees</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0-11 years old</td>
+                    <td>Free</td>
+                </tr>
+                <tr>
+                    <td>Above 12 years</td>
+                    <td>Charged as adults</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container round-edge">
+      <h2>Check-in/out Time</h2>
+      <p><strong>Check-in time:</strong> Available 24 hours</p>
+      <p><strong>Check-out time:</strong> Available 24 hours</p>
+  </div>
+
+    <div class="container round-edge">
+        <h2>Pet Policy</h2>
+        <p>Pets are welcome at this property.</p>
+    </div>
+</div>
+
 
   <footer class="footer">
     <div class="footer-content">
