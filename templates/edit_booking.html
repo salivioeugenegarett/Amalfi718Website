@@ -141,7 +141,7 @@
 
             if (dateIn && dateOut && dateOut > dateIn) {
                 const timeDiff = dateOut - dateIn;
-                const days = timeDiff / (1000 * 3600 * 24); // Calculate days
+                const days = timeDiff / (1000 * 3600 * 24);
                 const totalCost = days * extraBeds * costPerBed;
                 totalCostElem.innerText = `Total Cost for Extra Beds: ${totalCost} pesos`;
             } else {

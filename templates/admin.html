@@ -7,9 +7,70 @@
     <link rel="icon" href="{{ url_for('static', filename='images/Amalfi718Hotel_Logo.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #800000;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #800000;
+            margin-bottom: 15px;
+        }
+        .btn {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #FFC300;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #DAA520;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+        }
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+        .room-availability, .booking-table {
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
+            background-color: #fff;
         }
         th, td {
             padding: 10px;
@@ -17,33 +78,18 @@
             border: 1px solid #ddd;
         }
         th {
-            background-color: #f4f4f4;
+            background-color: #800000;
+            color: white;
         }
         tr:hover {
             background-color: #f1f1f1;
         }
-        .btn {
-            margin: 5px;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
+        input[type="text"], input[type="email"], input[type="date"], input[type="time"], input[type="number"], select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .btn-danger {
-            background-color: #dc3545;
-            align-items: center;
-            width: 80px;
-            height: 40px;
-        }
-        .btn-edit {
-            background-color: #ffc107;
-            align-items: center;
-            width: 80px;
-            height: 40px;
-            margin: 5px;
         }
         .modal {
             display: none; 
@@ -79,13 +125,16 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        .summary-item {
+            font-size: 20px;
+            font-weight: bold;
+        }
         .pay-btn {
-            background-color: maroon;
+            background-color: #800000;
             color: white; 
             border: none; 
             padding: 10px 20px; 
             text-align: center; 
-            text-decoration: none; 
             display: inline-block; 
             font-size: 16px; 
             margin: 20px auto; 
@@ -94,7 +143,7 @@
             width: 100%;
         }
         .pay-btn:hover {
-            background-color: #800000; 
+            background-color: #900000; 
         }
         .close {
             color: #aaa;
@@ -108,60 +157,116 @@
             text-decoration: none;
             cursor: pointer;
         }
-
+        #searchInput {
+            margin: 15px 0;
+            padding: 10px;
+            width: calc(100% - 20px);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .no-results-modal {
+            text-align: center;
+        }
+        .button-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            border-top: 2px solid #800000;
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
+    
     <div class="container">
-        <h2>Admin Page</h2>
+        <h2>InstaReserve: Admin Page</h2>
         <button class="btn" onclick="location.href='/logout'">Log Out</button>
-        <button class="btn" onclick="document.getElementById('addBookingModal').style.display='block'">Add Booking</button>
-        <button class="btn" onclick="location.href='https://dashboard.paymongo.com/home'">Paymongo Dashboard</button>
+        <div class="room-availability">
+            <h3>Room Availability</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Room Type</th>
+                        <th>Available Rooms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Standard</td>
+                        <td>{{ availability['Standard'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Superior</td>
+                        <td>{{ availability['Superior'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Deluxe</td>
+                        <td>{{ availability['Deluxe'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Suite</td>
+                        <td>{{ availability['Suite'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="button-bar">
+            <h3>Booking List:</h3>
+        </div>
+        <div class="button-bar">
+            <button class="btn" onclick="document.getElementById('addBookingModal').style.display='block'">Add Booking</button>
+            <button class="btn" onclick="location.href='https://dashboard.paymongo.com/home'">Paymongo Dashboard</button>
+        </div>
+
         <input type="text" id="searchInput" placeholder="Search by name, phone, or email" onkeyup="searchTable()">
 
-        </form>
-        
-        <table id="bookingTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Room</th>
-                    <th>Date In</th>
-                    <th>Time In</th>
-                    <th>Date Out</th>
-                    <th>Time Out</th>
-                    <th>Guests (Adults)</th>
-                    <th>Guests (Children)</th>
-                    <th>Extra Bed</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>{{ user.room }}</td>
-                    <td>{{ user.datein }}</td>
-                    <td>{{ user.timein }}</td>
-                    <td>{{ user.dateout }}</td>
-                    <td>{{ user.timeout }}</td>
-                    <td>{{ user.guestadult }}</td>
-                    <td>{{ user.guestchild }}</td>
-                    <td>{{ user.request }}</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editBooking({{ user.id }})">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteBooking({{ user.id }})">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="booking-table">
+            <div class="table-responsive">
+                <table id="bookingTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Room</th>
+                            <th>Date In</th>
+                            <th>Time In</th>
+                            <th>Date Out</th>
+                            <th>Time Out</th>
+                            <th>Guests (Adults)</th>
+                            <th>Guests (Children)</th>
+                            <th>Extra Bed</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.room }}</td>
+                            <td>{{ user.datein }}</td>
+                            <td>{{ user.timein }}</td>
+                            <td>{{ user.dateout }}</td>
+                            <td>{{ user.timeout }}</td>
+                            <td>{{ user.guestadult }}</td>
+                            <td>{{ user.guestchild }}</td>
+                            <td>{{ user.request }}</td>
+                            <td>{{ user.price }}</td>
+                            <td>
+                                <button class="btn btn-edit" onclick="editBooking({{ user.id }})">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteBooking({{ user.id }})">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>        
     </div>
 
     <div id="addBookingModal" class="modal" style="display:none;">
@@ -183,7 +288,7 @@
                     <label for="address">Address:</label>
                     <input type="text" id="address" name="address" required><br>
                     <label for="room">Select Room</label>
-                    <select id="room" name="room" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: calc(100% - 20px);">
+                    <select id="room" name="room" required>
                         <option value="">Choose a room</option>
                         <option value="Standard">Standard Room</option>
                         <option value="Superior">Superior Room</option>
@@ -202,11 +307,12 @@
                     <input type="number" id="guestadult" name="guestadult" required onchange="updateSummary()"><br>
                     <label for="guestchild">Guests (Children):</label>
                     <input type="number" id="guestchild" name="guestchild" required onchange="updateSummary()"><br>
-                    <label for="request">Special Requests:</label>
-                    <textarea id="request" name="request"></textarea><br>
-                    <div class="summary-item" style="font-size: 20px;">
-                        Total Amount: PHP <span id="hidden_total_price" style="font-weight: bold;">N/A</span>
+                    <label for="request">Extra Bed:</label>
+                    <input type="number" id="request" name="request" value="0" min="0" required onchange="updateSummary()"><br>
+                    <div class="summary-item">
+                        Total Amount: PHP <span id="total_price_display">N/A</span>
                     </div>
+                    <input type="hidden" id="hidden_total_price" name="hidden_total_price" value="0">                    
                     <button type="submit" class="pay-btn">Submit</button>
                     <button type="button" class="pay-btn" onclick="document.getElementById('addBookingModal').style.display='none'">Cancel</button>
                 </form>
@@ -215,7 +321,7 @@
     </div>
 
     <div id="noResultsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content no-results-modal">
             <div class="modal-header">
                 <span class="close" onclick="document.getElementById('noResultsModal').style.display='none'">&times;</span>
                 <h3>No Results Found</h3>
@@ -226,10 +332,8 @@
         </div>
     </div>
     
-
     <script>
         function editBooking(id) {
-
             window.location.href = '/edit-booking/' + id;
         }
 
@@ -245,12 +349,15 @@
                     });
             }
         }
+
         function updateSummary() {
             const roomSelect = document.getElementById("room");
             const selectedRoom = roomSelect.options[roomSelect.selectedIndex].value;
             const checkInDate = document.getElementById("datein").value ? new Date(document.getElementById("datein").value) : null;
             const checkOutDate = document.getElementById("dateout").value ? new Date(document.getElementById("dateout").value) : null;
-            
+            const extraBeds = document.getElementById('request').value || 0;
+            const costPerBed = 950;
+
             const roomPricePerDay = {
                 Standard: 2900,
                 Superior: 3200,
@@ -263,48 +370,92 @@
                 days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
             }
 
+            const bedPrice = extraBeds * costPerBed;
             const pricePerDay = roomPricePerDay[selectedRoom] || 0;
-            const totalPrice = days * pricePerDay;
+            const totalPrice = days * (pricePerDay + bedPrice);
 
-            console.log(`Total price calculated: ${totalPrice}`);
-
-            // Update the total price display
-            document.getElementById("hidden_total_price").innerText = totalPrice ? totalPrice : 'N/A';
+            document.getElementById("total_price_display").innerText = totalPrice ? totalPrice : 'N/A';
+            document.getElementById("hidden_total_price").value = totalPrice;
         }
-
 
         function searchTable() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const table = document.getElementById("bookingTable");
-    const tr = table.getElementsByTagName("tr");
-    let hasResults = false;
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const table = document.getElementById("bookingTable");
+            const tr = table.getElementsByTagName("tr");
+            let hasResults = false;
 
-    for (let i = 1; i < tr.length; i++) { 
-        const tdName = tr[i].getElementsByTagName("td")[1];
-        const tdEmail = tr[i].getElementsByTagName("td")[2];
-        const tdPhone = tr[i].getElementsByTagName("td")[3];
+            for (let i = 1; i < tr.length; i++) { 
+                const tdName = tr[i].getElementsByTagName("td")[1];
+                const tdEmail = tr[i].getElementsByTagName("td")[2];
+                const tdPhone = tr[i].getElementsByTagName("td")[3];
 
-        if (tdName || tdEmail || tdPhone) {
-            const nameText = tdName.textContent.toLowerCase();
-            const emailText = tdEmail.textContent.toLowerCase();
-            const phoneText = tdPhone.textContent.toLowerCase();
+                if (tdName || tdEmail || tdPhone) {
+                    const nameText = tdName.textContent.toLowerCase();
+                    const emailText = tdEmail.textContent.toLowerCase();
+                    const phoneText = tdPhone.textContent.toLowerCase();
 
-            if (nameText.includes(input) || emailText.includes(input) || phoneText.includes(input)) {
-                tr[i].style.display = "";
-                hasResults = true;
+                    if (nameText.includes(input) || emailText.includes(input) || phoneText.includes(input)) {
+                        tr[i].style.display = "";
+                        hasResults = true;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+
+            if (!hasResults && input) {
+                document.getElementById('noResultsModal').style.display = 'block';
             } else {
-                tr[i].style.display = "none";
+                document.getElementById('noResultsModal').style.display = 'none';
             }
         }
-    }
 
-    if (!hasResults && input) {
-        document.getElementById('noResultsModal').style.display = 'block';
-    } else {
-        document.getElementById('noResultsModal').style.display = 'none';
-    }
-}
+        function checkAvailability() {
+            const room = document.getElementById("room").value;
+            const dateIn = document.getElementById("datein").value;
+            const dateOut = document.getElementById("dateout").value;
 
+            if (room && dateIn && dateOut) {
+                console.log(`Checking availability for ${room} from ${dateIn} to ${dateOut}`);
+
+                fetch(`/check-availability?room=${room}&datein=${dateIn}&dateout=${dateOut}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Network response was not ok:', response.statusText);
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Availability data received:', data);
+                        const statusElement = document.getElementById(`status-${room.toLowerCase()}`);
+                        const submitButton = document.getElementById("submit-btn");
+
+                        if (data.available) {
+                            statusElement.innerText = "Available";
+                            statusElement.classList.remove("unavailable-status");
+                            statusElement.classList.add("availability-status");
+                            
+                            submitButton.disabled = false;
+                            submitButton.style.backgroundColor = '#800000';
+                            submitButton.style.cursor = 'pointer';
+                        } else {
+                            statusElement.innerText = "Not Available";
+                            statusElement.classList.remove("availability-status");
+                            statusElement.classList.add("unavailable-status");
+                            
+                            submitButton.disabled = true;
+                            submitButton.style.backgroundColor = 'gray';
+                            submitButton.style.cursor = 'not-allowed';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking availability:', error);
+                    });
+            } else {
+                console.warn('Room, dateIn, or dateOut is not provided.');
+            }
+        }
     </script>
 </body>
 </html>

@@ -49,6 +49,7 @@ class User(db.Model):
     guestadult = db.Column(db.Integer)        
     guestchild = db.Column(db.Integer)        
     request = db.Column(db.String(250))
+    price = db.Column(db.Float, nullable=False)
 
     def decrypt_name(self):
         return fernet.decrypt(self.name).decode()
@@ -70,7 +71,16 @@ def admin_required(f):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    total_rooms_per_type = 4
+    room_types = ['Standard', 'Superior', 'Deluxe', 'Suite']
+    availability = {}
+
+    for room in room_types:
+        booked_rooms = User.query.filter(User.room == room).count()
+        available_rooms = total_rooms_per_type - booked_rooms
+        availability[room] = available_rooms > 0
+
+    return render_template('index.html', availability=availability)
 
 @app.route('/standard-room')
 def standard_room():
@@ -123,6 +133,7 @@ def user_interface():
                 'guestadult': booking.guestadult,
                 'guestchild': booking.guestchild,
                 'request': booking.request,
+                'price': booking.price,
             })
     else:
         decrypted_bookings = []
@@ -154,6 +165,17 @@ def admin():
 @app.route('/admin_page')  
 @admin_required
 def admin_page():
+
+    total_rooms_per_type = 4
+
+    room_types = ['Standard', 'Superior', 'Deluxe', 'Suite']
+    availability = {}
+
+    for room in room_types:
+        booked_rooms = User.query.filter(User.room == room).count()
+        available_rooms = total_rooms_per_type - booked_rooms
+        availability[room] = available_rooms
+
     users = User.query.all()
 
     decrypted_users = []
@@ -172,9 +194,10 @@ def admin_page():
             'guestadult': user.guestadult,
             'guestchild': user.guestchild,
             'request': user.request,
+            'price': user.price,
         })
 
-    return render_template('admin.html', users=decrypted_users)
+    return render_template('admin.html', users=decrypted_users, availability=availability)
 
 @app.route('/add-booking', methods=['POST'])
 def add_booking():
@@ -197,6 +220,9 @@ def add_booking():
     encrypted_phone = fernet.encrypt(phone.encode())
     encrypted_address = fernet.encrypt(address.encode())
 
+    total_price_str = request.form.get('hidden_total_price', '0')
+    price = float(total_price_str)
+
     new_user = User(
         name=encrypted_name, 
         email=email, 
@@ -210,7 +236,8 @@ def add_booking():
         room=room, 
         guestadult=int(guestadult), 
         guestchild=int(guestchild), 
-        request=request_text
+        request=request_text,
+        price=price
     )
 
     db.session.add(new_user)
@@ -380,6 +407,15 @@ def forgot_password():
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():
 
+    total_price_str = request.form.get('hidden_total_price', '0')
+    print(f"Received total_price: {total_price_str}")
+    try:
+        total_amount = int(float(total_price_str))
+        print(f"Total amount as integer: {total_amount}")  
+    except ValueError:
+        total_amount = 0
+        print("Failed to convert total_price to an integer, using total_amount = 0")
+
     name = request.form['name']
     email = request.form['email']
     password = request.form['password'] 
@@ -398,6 +434,8 @@ def pay():
     encrypted_phone = fernet.encrypt(phone.encode())
     encrypted_address = fernet.encrypt(address.encode())
 
+    price = float(total_price_str)
+
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         flash('Email already exists! Booking will be updated.', 'warning')
@@ -411,7 +449,7 @@ def pay():
         existing_user.room = room
         existing_user.guestadult = int(guestadult)
         existing_user.guestchild = int(guestchild)
-        
+        existing_user.price = total_amount
         db.session.commit()
     else:
         new_user = User(
@@ -427,6 +465,7 @@ def pay():
             room=room, 
             guestadult=int(guestadult),
             guestchild=int(guestchild), 
+            price=total_amount,
         )
 
         db.session.add(new_user)
@@ -449,13 +488,13 @@ def pay():
             print("Failed to convert total_price to an integer, using total_amount = 0")
 
     if request.method == 'POST':
-        client = vonage.Client(key="0275150b", secret="BqazgTkjKFGS5AIc")
+        client = vonage.Client(key="09aee3d3", secret="D9fXu7aD9hdRIaIG")
         sms = vonage.Sms(client)
         
         responseData = sms.send_message(
             {
                 "from": "Amalfi 718 Hotel",
-                "to": "639673671662",
+                "to": "639816120287",
                 "text": "Amalfi 718 Hotel\n\nHello " + name + ".\nYou successfully paid Php " + str(total_amount) + ".\n" + "Details:\nRoom Type: " + room + "Room\nCheck In: " + str(datein)+ "\nCheck Out: " + str(dateout) + "\n\nThankyou for using InstaReserve.\n",
             }
         )
@@ -502,34 +541,30 @@ def backup():
 
 
 def check_room_availability(room, datein, dateout):
-    # Convert date strings to datetime objects
+
     date_in = datetime.strptime(datein, '%Y-%m-%d')
     date_out = datetime.strptime(dateout, '%Y-%m-%d')
 
-    # Query the database to check if the room is available
     reservations = User.query.filter(
-        User.room == room,  # Use 'room' variable instead of 'room_type'
+        User.room == room,
         and_(
-            User.datein < date_out,  # Check if the current booking ends before the new booking starts
-            User.dateout > date_in   # Check if the current booking starts after the new booking ends
+            User.datein < date_out,
+            User.dateout > date_in  
         )
     ).all()
 
-    # If any reservations exist for this room in the date range, it's unavailable
-    return len(reservations) == 0  # Return True if no reservations, else False
+    return len(reservations) == 0
 
 @app.route('/check-availability')
 def check_availability():
-    room = request.args.get('room')  # The room type or identifier
-    datein = request.args.get('datein')  # Check-in date
-    dateout = request.args.get('dateout')  # Check-out date
+    room = request.args.get('room')
+    datein = request.args.get('datein')
+    dateout = request.args.get('dateout') 
 
-    # Perform the logic to check if the room is available for the given dates
+
     available = check_room_availability(room, datein, dateout)
 
     return jsonify({'available': available})
-
-
 
 if __name__ == '__main__':
     with app.app_context():

@@ -442,8 +442,8 @@ h2 {
     margin: 20px auto;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%; /* Adjust width as needed */
-    max-width: 1200px; /* Max width for larger screens */
+    width: 90%; 
+    max-width: 1200px; 
 }
 
 .policy-item {

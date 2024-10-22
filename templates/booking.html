@@ -207,8 +207,8 @@
                 <div class="form-group">
                     <label for="address">Address:</label>
                     <input type="text" id="address" name="address" required onchange="updateSummary()">
-                </div>
-    
+                </div>  
+
                 <div class="form-group">
                     <label for="room">Select Room</label>
                     <select id="room" name="room" required onchange="checkAvailability(); updateSummary()">
@@ -218,26 +218,26 @@
                         <option value="Suite">Suite Room</option>
                         <option value="Deluxe">Deluxe Room</option>
                     </select>
-                </div>    
+                </div>  
     
                 <div class="form-group">
                     <label for="datein">Date In:</label>
-                    <input type="date" id="datein" name="datein" required onchange="updateSummary()">
+                    <input type="date" id="datein" name="datein" required onchange="checkAvailability(); updateSummary()">
                 </div>
     
                 <div class="form-group">
                     <label for="timein">Time In:</label>
-                    <input type="time" id="timein" name="timein" required onchange="updateSummary()">
+                    <input type="time" id="timein" name="timein" required onchange="checkAvailability(); updateSummary()">
                 </div>
     
                 <div class="form-group">
                     <label for="dateout">Date Out:</label>
-                    <input type="date" id="dateout" name="dateout" required onchange="updateSummary()">
+                    <input type="date" id="dateout" name="dateout" required onchange="checkAvailability(); updateSummary()">
                 </div>
     
                 <div class="form-group">
                     <label for="timeout">Time Out:</label>
-                    <input type="time" id="timeout" name="timeout" required onchange="updateSummary()">
+                    <input type="time" id="timeout" name="timeout" required onchange="checkAvailability(); updateSummary()">
                 </div>
     
                 <div class="form-group">
@@ -252,7 +252,7 @@
 
             <input type="hidden" name="hidden_total_price" id="hidden_total_price">
 
-            <button type="submit" class="pay-btn">Submit</button>
+            <button type="submit" class="pay-btn" id="submit-btn">Submit</button>
             <button type="button" class="pay-btn" onclick="document.getElementById('addBookingModal').style.display='none'">Cancel</button>
         </form>
     </div>
@@ -408,15 +408,24 @@ function checkAvailability() {
             .then(data => {
                 console.log('Availability data received:', data);
                 const statusElement = document.getElementById(`status-${room.toLowerCase()}`);
+                const submitButton = document.getElementById("submit-btn");
 
                 if (data.available) {
                     statusElement.innerText = "Available";
                     statusElement.classList.remove("unavailable-status");
                     statusElement.classList.add("availability-status");
+                    
+                    submitButton.disabled = false;
+                    submitButton.style.backgroundColor = '#800000';
+                    submitButton.style.cursor = 'pointer';
                 } else {
                     statusElement.innerText = "Not Available";
                     statusElement.classList.remove("availability-status");
                     statusElement.classList.add("unavailable-status");
+                    
+                    submitButton.disabled = true;
+                    submitButton.style.backgroundColor = 'gray';
+                    submitButton.style.cursor = 'not-allowed';
                 }
             })
             .catch(error => {

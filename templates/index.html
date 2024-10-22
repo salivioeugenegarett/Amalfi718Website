@@ -47,8 +47,15 @@
           <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
-          <span class="availability">Available</span>
-          <a href="/standard-room" class="book-btn">Reserve</a>
+          <span id="status-standard" class="availability" 
+                style="background-color: {{ 'green' if availability['Standard'] else 'red' }};">
+            {{ 'Available' if availability['Standard'] else 'Not Available' }}
+          </span>
+          <a href="/standard-room" class="book-btn" 
+            style="background-color: {{ 'green' if availability['Standard'] else 'gray' }}; 
+                  pointer-events: {{ 'auto' if availability['Standard'] else 'none' }};">
+            Reserve
+          </a>
         </div>
       </div>
       <div class="room">
@@ -67,8 +74,15 @@
           <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
-          <span class="availability">Available</span>
-          <a href="/superior-room" class="book-btn">Reserve</a>
+          <span id="status-superior" class="availability" 
+                style="background-color: {{ 'green' if availability['Superior'] else 'red' }};">
+            {{ 'Available' if availability['Superior'] else 'Not Available' }}
+          </span>
+          <a href="/superior-room" class="book-btn" 
+            style="background-color: {{ 'green' if availability['Superior'] else 'gray' }}; 
+                    pointer-events: {{ 'auto' if availability['Superior'] else 'none' }};">
+            Reserve
+          </a>
         </div>
       </div>
       <div class="room">
@@ -87,8 +101,15 @@
           <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
-          <span class="availability">Available</span>
-          <a href="/deluxe-room" class="book-btn">Reserve</a>
+          <span id="status-deluxe" class="availability" 
+                style="background-color: {{ 'green' if availability['Deluxe'] else 'red' }};">
+            {{ 'Available' if availability['Deluxe'] else 'Not Available' }}
+          </span>
+          <a href="/deluxe-room" class="book-btn" 
+            style="background-color: {{ 'green' if availability['Deluxe'] else 'gray' }}; 
+                    pointer-events: {{ 'auto' if availability['Deluxe'] else 'none' }};">
+            Reserve
+          </a>
         </div>
       </div>
       <div class="room">
@@ -110,8 +131,15 @@
           <li>Free Wifi</li>
         </ul>
         <div class="room-footer">
-          <span class="availability">Available</span>
-          <a href="/suite-room" class="book-btn">Reserve</a>
+          <span id="status-suite" class="availability" 
+                style="background-color: {{ 'green' if availability['Suite'] else 'red' }};">
+            {{ 'Available' if availability['Suite'] else 'Not Available' }}
+          </span>
+          <a href="/suite-room" class="book-btn" 
+            style="background-color: {{ 'green' if availability['Suite'] else 'gray' }}; 
+                    pointer-events: {{ 'auto' if availability['Suite'] else 'none' }};">
+            Reserve
+          </a>
         </div>
       </div>
 
@@ -185,26 +213,17 @@
   </div>
 
     <div class="container round-edge">
-        <h2>Child Policy</h2>
-        <p><strong>Children must be aged 4 and above to stay at the property.</strong></p>
-        <table class="policy-table">
-            <thead>
-                <tr>
-                    <th>Age</th>
-                    <th>Fees</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>0-11 years old</td>
-                    <td>Free</td>
-                </tr>
-                <tr>
-                    <td>Above 12 years</td>
-                    <td>Charged as adults</td>
-                </tr>
-            </tbody>
-        </table>
+        <h2>Exploring the Area</h2>
+        <ul>
+          <li>Umbira Café - On Site</li>
+          <li>SM City Lipa - 300m</li>
+          <li>Lipa City Hall - 500m</li>
+          <li>The Coffee Bean and Tea Leaf - 1.7km</li>
+          <li>Big Ben Complex - 1.8km</li>
+          <li>Cafe de Lipa - 1.9km</li>
+          <li>Robinsons Lipa - 2.0km</li>
+          <li>Dunkin' Donuts - 2.0km</li>
+        </ul>
     </div>
 
     <div class="container round-edge">
