@@ -293,7 +293,6 @@ def add_book():
     return
 
 @app.route('/delete-booking/<int:id>', methods=['DELETE'])
-@admin_required  
 def delete_booking(id):
     booking = User.query.get(id)
     if booking:
