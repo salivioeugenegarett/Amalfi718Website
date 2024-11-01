@@ -487,7 +487,7 @@ def pay():
             print("Failed to convert total_price to an integer, using total_amount = 0")
 
     if request.method == 'POST':
-        '''client = vonage.Client(key="09aee3d3", secret="D9fXu7aD9hdRIaIG")
+        client = vonage.Client(key="09aee3d3", secret="D9fXu7aD9hdRIaIG")
         sms = vonage.Sms(client)
         
         responseData = sms.send_message(
@@ -501,7 +501,7 @@ def pay():
         if responseData["messages"][0]["status"] == "0":
             print("Message sent successfully.")
         else:
-            print(f"Message failed with error: {responseData['messages'][0]['error-text']}")'''
+            print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
             
         url = "https://api.paymongo.com/v1/links"
         headers = {
